@@ -1,0 +1,8 @@
+# A última regra que casa com o caminho vence.
+# Documentação e scripts em UTF-8 com LF.
+*.md text eol=lf
+*.ps1 text eol=lf
+
+# O subagente original é UTF-16 LE, sem BOM, com LF.
+# -text impede que core.autocrlf reescreva os bytes.
+.cursor/agents/jira-card-creator.md -text
