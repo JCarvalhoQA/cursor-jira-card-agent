@@ -4,7 +4,29 @@ Este guia copia o subagente `jira-card-creator` para o Cursor. O arquivo distrib
 
 O procedimento **não substitui** um agente já instalado. Se o destino existir, o comando para e não grava nada.
 
-Voltar ao [manual principal](../README.md). Atualização, preservação de customização e reversão estão na seção [Atualizar o subagente](../README.md#atualizar-o-subagente).
+Voltar ao [manual principal](../README.md). Atualização, preservação de customização e reversão estão na seção [Atualizar o subagente](../README.md#atualizar-o-subagente). A diferença entre arquivo copiado e agente capaz de falar com o Jira está em [Arquivo instalado e agente funcional](../README.md#arquivo-instalado-e-agente-funcional).
+
+## Instalador do Windows
+
+Na raiz do clone, o PowerShell 5.1 ou posterior basta. Não é preciso administrador.
+
+```powershell
+powershell -NoProfile -File .\scripts\install.ps1 -Scope Global
+powershell -NoProfile -File .\scripts\install.ps1 -Scope Project -ProjectPath "C:\caminho\do\seu\projeto"
+powershell -NoProfile -File .\scripts\install.ps1 -Scope Global -DryRun
+powershell -NoProfile -File .\scripts\install.ps1 -Scope Global -Replace
+```
+
+| Situação | Comando | Efeito |
+| --- | --- | --- |
+| Primeira instalação | sem `-Replace` | Copia se o destino não existe |
+| Destino já existe | sem `-Replace` | Para com código 2 e não grava |
+| Atualizar de propósito | `-Replace` | Grava `jira-card-creator.md.bak-aaaammdd-HHMMSS` e depois copia |
+| Só conferir | `-DryRun` | Imprime origem, destino e SHA-256 |
+
+O script confere `checksums.sha256` antes de copiar. Não altera MCP. Linux e macOS continuam no procedimento manual abaixo; o script não foi executado nesses sistemas.
+
+Rollback do `-Replace`: copie o `.bak` mais recente de volta para `jira-card-creator.md` com `Copy-Item` ou `cp`. Não apague o backup antes de conferir o hash.
 
 ## Antes de copiar
 

@@ -149,3 +149,15 @@ Diferença adicional, só de leitura do schema local de `createJiraIssue`, tamb�
 O subagente manda descobrir o schema com `GetDynamicTools` antes de cada chamada. O texto interno, porém, não foi alterado para acompanhar esses nomes. Trate isso como risco de compatibilidade, descrito em [TROUBLESHOOTING.md](TROUBLESHOOTING.md#ferramenta-citada-pelo-subagente-nao-aparece).
 
 Ferramentas que o subagente proíbe usar, mesmo que apareçam no servidor: `transitionJiraIssue` e, por padrão, `editJiraIssue`.
+
+## Diagnóstico rápido
+
+Use esta ordem quando o subagente "não funciona". O detalhe está em [TROUBLESHOOTING.md](TROUBLESHOOTING.md#arquivo-instalado-e-o-jira-nao-responde).
+
+1. O arquivo instalado tem o SHA-256 de [checksums.sha256](../checksums.sha256).
+2. `/jira-card-creator` abre um CARD_REVIEW de um Markdown local, sem chave Jira.
+3. O namespace `plugin-atlassian-atlassian` aparece em `GetDynamicTools`.
+4. A autenticação OAuth está concluída.
+5. Uma leitura — `getAccessibleAtlassianResources` ou `getJiraIssue` de uma chave que você já pode abrir no navegador — retorna dado. Não use `createJiraIssue`, `editJiraIssue` nem `transitionJiraIssue` como teste de conexão.
+
+Nesta revisão de distribuição, os passos 3 a 5 não foram repetidos contra o site Atlassian. O catálogo primário descrito acima continua sendo o observado na publicação 1.0.0.

@@ -4,6 +4,25 @@ O versionamento deste repositório segue [Keep a Changelog](https://keepachangel
 
 A versão identifica o **pacote de distribuição**. O arquivo `.cursor/agents/jira-card-creator.md` não recebe campo de versão nem comentário extra: ele permanece cópia integral do subagente original. A identidade desse arquivo é o SHA-256 publicado em cada versão.
 
+## [1.1.0] - 2026-11-13
+
+### Adicionado
+
+- `scripts/install.ps1`, com escopo global ou de projeto, `-DryRun`, checagem de SHA-256 e `-Replace` com backup.
+- `tests/Validate-Distribution.ps1` e `tests/Test-Install.ps1`.
+- Fixture sintética `tests/fixtures/spec-incompleta.md`.
+- `docs/ENCODING.md` e `docs/SMOKE-TEST.md`.
+- `checksums.sha256` com o hash do subagente.
+
+### Mantido
+
+- Bytes de `.cursor/agents/jira-card-creator.md`. O SHA-256 continua `1E10F1A17614CDD81F2CAAE4156DAA69A3D26A3FECC89C23A316282065B3DFFF`.
+- Regras de CREATE, CARD_REVIEW, template, duplicidade, confirmação, status e exclusão.
+
+### Pendente
+
+- Conversão do subagente para UTF-8. O texto sobrevive à transcodificação, e o GitHub mostra o arquivo como binário, mas esta versão não carregou uma cópia UTF-8 na Cursor. O arquivo distribuído permanece UTF-16 LE sem BOM.
+
 ## [1.0.0] - 2026-11-13
 
 ### Adicionado

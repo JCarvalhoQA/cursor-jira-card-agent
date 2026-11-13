@@ -2,7 +2,7 @@
 
 O subagente tem dois modos. Se o pedido misturar os dois, ele revisa primeiro e só cria ou altera depois de confirmação explícita.
 
-Voltar ao [manual principal](../README.md). O template completo está na seção [Template oficial](../README.md#template-oficial-do-card). A instalação está em [INSTALLATION.md](INSTALLATION.md).
+Voltar ao [manual principal](../README.md). O template completo está na seção [Template oficial](../README.md#template-oficial-do-card). A instalação está em [INSTALLATION.md](INSTALLATION.md). O que foi executado de fato, e o que ficou só como procedimento, está em [SMOKE-TEST.md](SMOKE-TEST.md).
 
 ## Como chamar
 

@@ -10,6 +10,8 @@ Repositório: [https://github.com/JCarvalhoQA/cursor-jira-card-agent](https://gi
 | [docs/ATLASSIAN-MCP.md](docs/ATLASSIAN-MCP.md) | Plugin Atlassian, autenticação e ferramentas |
 | [docs/USAGE.md](docs/USAGE.md) | Modos CREATE e CARD_REVIEW, com o que informar em cada um |
 | [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) | Falhas de instalação, MCP, hash e permissão |
+| [docs/ENCODING.md](docs/ENCODING.md) | UTF-16 do agente, prova de texto e pendência de UTF-8 |
+| [docs/SMOKE-TEST.md](docs/SMOKE-TEST.md) | Procedimento de fumaça e o que já foi executado |
 | [CHANGELOG.md](CHANGELOG.md) | Versões do pacote e o SHA-256 de cada uma |
 
 ## O que é
@@ -91,9 +93,53 @@ Há dois destinos:
 
 Se os dois existirem, o do projeto prevalece. Referência: [Subagents](https://cursor.com/docs/subagents).
 
-Os comandos abaixo **param** se o destino já existe. Eles não substituem outro agente. Copie com `Copy-Item` ou `cp`. Não regrave o arquivo num editor: o original é UTF-16 LE sem BOM, e salvar como UTF-8 muda o hash.
+Os comandos abaixo **param** se o destino já existe. Eles não substituem outro agente. Copie com `Copy-Item` ou `cp`. Não regrave o arquivo num editor: o original é UTF-16 LE sem BOM, e salvar como UTF-8 muda o hash. O estudo dessa codificação está em [docs/ENCODING.md](docs/ENCODING.md).
 
-O passo a passo ampliado, incluindo a conferência de hash, está em [docs/INSTALLATION.md](docs/INSTALLATION.md).
+### Instalação recomendada no Windows
+
+Na raiz do clone, sem privilégio de administrador:
+
+```powershell
+powershell -NoProfile -File .\scripts\install.ps1 -Scope Global
+```
+
+Por projeto:
+
+```powershell
+powershell -NoProfile -File .\scripts\install.ps1 -Scope Project -ProjectPath "C:\caminho\do\seu\projeto"
+```
+
+`-DryRun` mostra origem, destino e hash, e não grava. Se o destino já existir, o script para com código 2. `-Replace` é o consentimento explícito: grava `jira-card-creator.md.bak-aaaammdd-HHMMSS` e só então substitui. O script não edita MCP.
+
+Atualização, depois de `git pull` na raiz do clone:
+
+```powershell
+powershell -NoProfile -File .\scripts\install.ps1 -Scope Global -Replace
+```
+
+O backup fica ao lado do arquivo instalado. Para reverter, copie o `.bak` de volta por cima do destino. O passo a passo manual, para Linux e macOS inclusive, continua em [docs/INSTALLATION.md](docs/INSTALLATION.md).
+
+<a id="arquivo-instalado-e-agente-funcional"></a>
+
+## Arquivo instalado e agente funcional
+
+Copiar o markdown torna o subagente elegível para a Cursor. Isso não autentica o Atlassian e não cria card.
+
+| O que você observou | O que isso confirma | O que ainda não está confirmado |
+| --- | --- | --- |
+| Arquivo no caminho certo e SHA-256 igual ao [CHANGELOG.md](CHANGELOG.md) | A cópia é a distribuição publicada | Que o chat vai delegar para ela |
+| `/jira-card-creator` responde um CARD_REVIEW de um `.md` local | O texto do agente entrou na sessão | Leitura de uma issue no Jira |
+| `getAccessibleAtlassianResources` devolve o seu site | A conta enxerga aquele site | Permissão de criar issue no projeto |
+
+O procedimento para separar esses estados está em [docs/SMOKE-TEST.md](docs/SMOKE-TEST.md). Diagnóstico quando o arquivo existe e o Jira não responde: [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md#arquivo-instalado-e-o-jira-nao-responde).
+
+## Compatibilidade com a Cursor
+
+O layout segue a documentação de subagentes consultada em 13/11/2026: pasta de projeto `.cursor/agents/`, pasta de usuário `~/.cursor/agents/`, frontmatter `name` e `description`, chamada `/jira-card-creator`. Referência: [Subagents](https://cursor.com/docs/subagents). Não houve matriz de versões do aplicativo. Uma Cursor que ainda não carrega essas pastas não lista o subagente, mesmo com o arquivo no disco. Se o mesmo nome existir no projeto e no usuário, o do projeto prevalece.
+
+## Instalação manual
+
+Os blocos abaixo copiam o arquivo sem o script. Valem para Windows, Linux e macOS. Eles param se o destino já existe.
 
 ### Windows (PowerShell)
 
@@ -341,7 +387,7 @@ git fetch origin
 git log HEAD..origin/main -- CHANGELOG.md .cursor/agents/jira-card-creator.md
 ```
 
-Leia o changelog no GitHub antes de copiar por cima do que está instalado: [CHANGELOG.md](https://github.com/JCarvalhoQA/cursor-jira-card-agent/blob/main/CHANGELOG.md). Enquanto a branch `main` não receber este conteúdo, acompanhe a branch do Pull Request indicada pelo mantenedor.
+Leia o [CHANGELOG.md](CHANGELOG.md) deste clone antes de copiar por cima do que está instalado. O arquivo em `main` no GitHub só passa a existir depois que o Pull Request de publicação for mesclado. Até lá, a cópia completa está na branch do Pull Request, não na ponta de `main`.
 
 ### Trazer o clone local
 
@@ -466,18 +512,20 @@ Quem revisar confere o diff do agente linha a linha. Documentação pode ser aju
 - Este repositório é **público**. Não há ambiente corporativo privado por trás desta URL.
 - Não versione segredo, token, senha, cookie, connection string, `.env` ou evidência com CPF, cartão ou e-mail pessoal.
 - O subagente manda mascarar esse tipo de dado com `[dado mascarado]` quando for escrever no Jira. A mesma regra vale para commit e issue daqui.
-- A publicação 1.0.0 não executou criação, edição, comentário nem transição no Jira.
+- A publicação não executou criação, edição, comentário nem transição no Jira.
 - Instalar o subagente não muda o `mcp.json` da sua Cursor. A configuração do MCP continua sendo sua.
+- Não coloque neste repositório URL interna, identificador de cliente, nome de ambiente privado ou e-mail corporativo. O e-mail que o Git grava no autor do commit vem da configuração local de quem commita; ele não precisa ser repetido nos arquivos.
+- Visibilidade: o repositório já é público. Esta distribuição não altera essa visibilidade.
 
 ## Integridade
 
 | Item | Valor |
 | --- | --- |
 | Arquivo | `.cursor/agents/jira-card-creator.md` |
-| SHA-256 da versão 1.0.0 | `1E10F1A17614CDD81F2CAAE4156DAA69A3D26A3FECC89C23A316282065B3DFFF` |
+| SHA-256 das versões 1.0.0 e 1.1.0 | `1E10F1A17614CDD81F2CAAE4156DAA69A3D26A3FECC89C23A316282065B3DFFF` |
 | Codificação | UTF-16 LE, sem BOM, LF |
 
-Na origem, esse hash foi calculado sobre `~/.cursor/agents/jira-card-creator.md` e sobre a cópia deste repositório. Os dois conferiram. O `.gitattributes` marca esse arquivo como `-text` para o Git não converter fim de linha.
+Na origem, esse hash foi calculado sobre `~/.cursor/agents/jira-card-creator.md` e sobre a cópia deste repositório. Os dois conferiram. A versão 1.1.0 não altera esses bytes. O `.gitattributes` marca esse arquivo como `-text` para o Git não converter fim de linha. A lista única de hash fica em [checksums.sha256](checksums.sha256).
 
 ## Estrutura do repositório
 
@@ -490,10 +538,20 @@ cursor-jira-card-agent/
 │   ├── INSTALLATION.md
 │   ├── ATLASSIAN-MCP.md
 │   ├── USAGE.md
-│   └── TROUBLESHOOTING.md
+│   ├── TROUBLESHOOTING.md
+│   ├── ENCODING.md
+│   └── SMOKE-TEST.md
+├── scripts/
+│   └── install.ps1
+├── tests/
+│   ├── Validate-Distribution.ps1
+│   ├── Test-Install.ps1
+│   └── fixtures/
+│       └── spec-incompleta.md
 ├── .gitattributes
 ├── .gitignore
 ├── CHANGELOG.md
+├── checksums.sha256
 └── README.md
 ```
 

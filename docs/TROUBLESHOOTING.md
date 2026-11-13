@@ -15,6 +15,20 @@ Voltar ao [manual principal](../README.md). Instalação: [INSTALLATION.md](INST
 5. Feche e abra o chat de Agent. Se ainda não aparecer, recarregue a janela da Cursor.
 6. Confira se o arquivo não foi salvo como UTF-8 por engano. Compare o SHA-256 com o da [versão 1.0.0](../CHANGELOG.md).
 
+## Arquivo instalado e o Jira não responde
+
+<a id="arquivo-instalado-e-o-jira-nao-responde"></a>
+
+Separe as camadas. Uma não corrige a outra.
+
+1. **Arquivo.** O caminho existe e o SHA-256 é o de [CHANGELOG.md](../CHANGELOG.md). Se o hash divergir, a Cursor pode estar lendo outra cópia, ou o arquivo foi regravado noutro encoding. Veja [ENCODING.md](ENCODING.md).
+2. **Seleção.** No chat de Agent, `/jira-card-creator` precisa resolver esse subagente. Se o comando não aparece, volte à seção [O Cursor não lista o subagente](#o-cursor-nao-lista-o-subagente). Ter o arquivo no disco não força a delegação.
+3. **MCP.** Customize mostra o plugin Atlassian autenticado, no namespace `plugin-atlassian-atlassian`. Sem isso, CARD_REVIEW de arquivo local ainda pode rodar; CREATE e leitura de chave Jira não.
+4. **Permissão no site.** `getAccessibleAtlassianResources` devolve o site, e a conta enxerga o projeto. Ferramenta ausente no catálogo primário não é o mesmo que permissão negada. Compare com [ATLASSIAN-MCP.md](ATLASSIAN-MCP.md).
+5. **Operação.** Criar issue é outro passo, só depois do rascunho e da confirmação. Falha de `createJiraIssue` não se resolve transicionando status.
+
+Não cole token no chat para "destravar" uma dessas camadas.
+
 ## A instalação recusou a cópia
 
 Esse é o comportamento pedido. O comando para quando o destino já existe, para não apagar outro agente nem uma customização local.
@@ -93,7 +107,7 @@ A conta autenticada no MCP usa as permissões que ela já tem no Jira. Este repo
 
 ## Quero desfazer uma atualização do arquivo
 
-1. Se você seguiu o backup da atualização, copie o `.bak` de volta para `jira-card-creator.md` com `Copy-Item` ou `cp`.
+1. Se a atualização usou `scripts/install.ps1 -Replace`, ou o backup descrito no [README](../README.md#atualizar-o-subagente), copie o `.bak` mais recente de volta para `jira-card-creator.md` com `Copy-Item` ou `cp`.
 2. Ou reinstale um commit conhecido:
 
 ```bash
